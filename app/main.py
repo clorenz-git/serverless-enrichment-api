@@ -3,11 +3,26 @@ from datetime import datetime, timezone
 from mangum import Mangum
 
 from app.models import UserRequest, EnrichedUser
+## adding version end point
+import os
+from datetime import datetime, timezone
 
 app = FastAPI(
     title="User Enrichment API",
     version="1.0.0",
 )
+
+### adding versioning end point
+
+@app.get("/version")
+def version():
+    return {
+        "service": os.getenv("SERVICE_NAME", "serverless-enrichment-api"),
+        "version": os.getenv("APP_VERSION", "dev"),
+        "git_sha": os.getenv("GIT_SHA", "unknown"),
+        "deployed_utc": os.getenv("DEPLOYED_UTC", "unknown"),
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+    }
 
 @app.get("/health")
 def health():
